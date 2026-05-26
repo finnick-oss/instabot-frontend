@@ -159,8 +159,14 @@ export default function AutomationBuilder({ initialConfig, posts, onBack, onSave
     const result = await api.saveConfig(configToSave)
     setSaving(false)
     if (result.success) {
+      // Re-fetch from server to use Supabase as ground truth
+      const verified = await api.fetchConfig()
+      const final = (verified && verified.active !== undefined)
+        ? { ...configToSave, ...verified }
+        : configToSave
+      setConfig(final)
+      onSaved(final)
       setSaveStatus('success')
-      onSaved(configToSave)
       setTimeout(() => setSaveStatus(null), 2500)
     } else {
       setSaveStatus('error')
@@ -168,12 +174,9 @@ export default function AutomationBuilder({ initialConfig, posts, onBack, onSave
     }
   }
 
-  // Auto-save when active toggle is changed
-  const handleToggleActive = async (val) => {
-    const updated = { ...config, active: val }
-    setConfig(updated)
-    await api.saveConfig(updated)
-    onSaved(updated)
+  // Toggle only updates local state — user must click Save & Activate to persist
+  const handleToggleActive = (val) => {
+    setConfig(prev => ({ ...prev, active: val }))
   }
 
   const handleSync = async () => {
