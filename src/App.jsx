@@ -102,6 +102,7 @@ export default function App() {
               onBack={() => setScreen('dashboard')}
               onSaved={handleSaved}
               onPrivacy={() => setScreen('privacy')}
+              onPostsRefresh={() => api.fetchPosts().then(setPosts)}
             />
           </motion.div>
         )}
