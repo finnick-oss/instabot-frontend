@@ -159,13 +159,9 @@ export default function AutomationBuilder({ initialConfig, posts, onBack, onSave
     const result = await api.saveConfig(configToSave)
     setSaving(false)
     if (result.success) {
-      // Re-fetch from server to use Supabase as ground truth
-      const verified = await api.fetchConfig()
-      const final = (verified && verified.active !== undefined)
-        ? { ...configToSave, ...verified }
-        : configToSave
-      setConfig(final)
-      onSaved(final)
+      // Backend confirmed the save — trust exactly what we sent
+      setConfig(configToSave)
+      onSaved(configToSave)
       setSaveStatus('success')
       setTimeout(() => setSaveStatus(null), 2500)
     } else {

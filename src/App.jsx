@@ -75,11 +75,10 @@ export default function App() {
   const handleToggleActive = async (automation) => {
     const updated = { ...automation, active: !automation.active }
     setAutomations(prev => prev.map(a => a.id === automation.id ? updated : a)) // optimistic UI
-    await api.saveConfig(updated)
-    // Re-fetch to confirm what Supabase actually stored
-    const verified = await api.fetchConfig()
-    if (verified && verified.active !== undefined) {
-      setAutomations(prev => prev.map(a => a.id === automation.id ? { ...a, ...verified } : a))
+    const result = await api.saveConfig(updated)
+    if (!result.success) {
+      // Revert optimistic update if save failed
+      setAutomations(prev => prev.map(a => a.id === automation.id ? automation : a))
     }
   }
 
