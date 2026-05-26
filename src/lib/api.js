@@ -50,6 +50,15 @@ export const api = {
     }
   },
 
+  async deleteConfig() {
+    try {
+      const res = await axios.delete(`${BASE}/api/config`)
+      return { success: true, data: res.data }
+    } catch (e) {
+      return { success: false, error: e.message }
+    }
+  },
+
   async checkHealth() {
     try {
       const res = await axios.get(`${BASE}/api/health`, { timeout: 3000 })

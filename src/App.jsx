@@ -67,7 +67,10 @@ export default function App() {
     api.fetchStats().then(setStats)
   }
 
-  const handleDelete = (id) => setAutomations(prev => prev.filter(a => a.id !== id))
+  const handleDelete = async (id) => {
+    setAutomations(prev => prev.filter(a => a.id !== id)) // remove from UI immediately
+    await api.deleteConfig()                               // delete from Supabase
+  }
 
   const handleToggleActive = async (automation) => {
     const updated = { ...automation, active: !automation.active }
