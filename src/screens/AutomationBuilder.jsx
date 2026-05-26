@@ -149,20 +149,31 @@ export default function AutomationBuilder({ initialConfig, posts, onBack, onSave
     setConfig(prev => ({ ...prev, ...patch }))
   }, [])
 
-  const handleSave = async (e) => {
+  // saveWithActive=true forces active:true (used by "Save & Activate" button)
+  const handleSave = async (e, saveWithActive = false) => {
     if (e) e.preventDefault()
     setSaving(true)
     setSaveStatus(null)
-    const result = await api.saveConfig(config)
+    const configToSave = saveWithActive ? { ...config, active: true } : config
+    if (saveWithActive) setConfig(configToSave)
+    const result = await api.saveConfig(configToSave)
     setSaving(false)
     if (result.success) {
       setSaveStatus('success')
-      onSaved(config)
+      onSaved(configToSave)
       setTimeout(() => setSaveStatus(null), 2500)
     } else {
       setSaveStatus('error')
       setTimeout(() => setSaveStatus(null), 3000)
     }
+  }
+
+  // Auto-save when active toggle is changed
+  const handleToggleActive = async (val) => {
+    const updated = { ...config, active: val }
+    setConfig(updated)
+    await api.saveConfig(updated)
+    onSaved(updated)
   }
 
   const handleSync = async () => {
@@ -243,14 +254,14 @@ export default function AutomationBuilder({ initialConfig, posts, onBack, onSave
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', borderLeft: '1px solid #1a1a1a' }}>
             <span style={{ fontSize: 12, color: '#555' }}>{config.active ? 'Active' : 'Inactive'}</span>
-            <Toggle checked={config.active} onChange={(v) => updateConfig({ active: v })} size="sm" />
+            <Toggle checked={config.active} onChange={handleToggleActive} size="sm" />
           </div>
 
           <motion.button
             whileHover={{ scale: 1.02, background: '#6d28d9' }}
             whileTap={{ scale: 0.97 }}
             type="button"
-            onClick={handleSave}
+            onClick={(e) => handleSave(e, true)}
             disabled={saving}
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
@@ -378,7 +389,7 @@ export default function AutomationBuilder({ initialConfig, posts, onBack, onSave
                 whileHover={{ scale: 1.02, background: '#6d28d9' }}
                 whileTap={{ scale: 0.97 }}
                 type="button"
-                onClick={handleSave}
+                onClick={(e) => handleSave(e, true)}
                 disabled={saving}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 6,
