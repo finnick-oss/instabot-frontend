@@ -42,7 +42,10 @@ export default function App() {
     api.fetchStats().then(setStats)
     api.fetchPosts().then(setPosts)
     api.fetchConfig().then(saved => {
-      if (saved && saved.name) setAutomations([{ ...saved, id: saved.id || '1' }])
+      // Accept config if it has any meaningful key — name, active, post_target, etc.
+      if (saved && typeof saved === 'object' && !Array.isArray(saved) && Object.keys(saved).length > 1) {
+        setAutomations([{ ...saved, name: saved.name || 'My Automation', id: saved.id || '1' }])
+      }
     })
   }, [])
 
