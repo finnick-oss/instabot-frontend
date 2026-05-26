@@ -176,11 +176,11 @@ export default function AutomationBuilder({ initialConfig, posts, onBack, onSave
   const stepIndex = STEPS.findIndex(s => s.id === activeStep)
 
   return (
-    <div style={{ minHeight: '100vh', background: '#080808', display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    <div style={{ minHeight: '100vh', background: '#080808', display: 'flex', flexDirection: 'column' }}>
       {/* Top bar */}
       <header style={{
         position: 'sticky', top: 0, zIndex: 50,
-        background: 'rgba(8,8,8,0.9)', backdropFilter: 'blur(20px)',
+        background: 'rgba(8,8,8,0.95)', backdropFilter: 'blur(20px)',
         borderBottom: '1px solid #141414',
         padding: '0 24px', height: 60,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16
@@ -267,14 +267,18 @@ export default function AutomationBuilder({ initialConfig, posts, onBack, onSave
       </header>
 
       {/* Body */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', minHeight: 0 }}>
+      <div style={{ display: 'flex', flex: 1 }}>
 
-        {/* Left sidebar — steps */}
+        {/* Left sidebar — sticky, page scrolls */}
         <aside style={{
           width: 220, flexShrink: 0,
           borderRight: '1px solid #111',
           padding: '24px 12px',
-          overflowY: 'auto'
+          position: 'sticky',
+          top: 60,
+          alignSelf: 'flex-start',
+          height: 'calc(100vh - 60px)',
+          overflowY: 'auto',
         }}>
           <div style={{ fontSize: 11, color: '#444', marginBottom: 12, paddingLeft: 14, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>
             Setup Steps
@@ -286,8 +290,8 @@ export default function AutomationBuilder({ initialConfig, posts, onBack, onSave
           </div>
         </aside>
 
-        {/* Main content */}
-        <main style={{ flex: 1, overflowY: 'auto', padding: '40px 48px', maxWidth: 700 }}>
+        {/* Main content — no inner scroll, page scrolls naturally */}
+        <main style={{ flex: 1, padding: '40px 48px', maxWidth: 700 }}>
 
           {/* Step progress */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 32 }}>
