@@ -109,7 +109,7 @@ export default function App() {
             <AutomationBuilder
               initialConfig={editingConfig}
               posts={posts}
-              onBack={() => setScreen('dashboard')}
+              onBack={() => { setScreen('dashboard'); api.fetchStats().then(setStats) }}
               onSaved={handleSaved}
               onPrivacy={() => setScreen('privacy')}
               onPostsRefresh={() => api.fetchPosts().then(setPosts)}
